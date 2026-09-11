@@ -1,5 +1,6 @@
-Atomic Handoff
-What It Is
+# Atomic Handoff
+
+## What It Is
 
 Atomic Handoff is a pattern for moving files from user space to root space without corruption, race conditions, or permission issues.
 The Problem
@@ -12,7 +13,8 @@ When a user builds an artifact (e.g., in a Distrobox container) and root needs t
 
     Race conditions — Two processes access the same file at the same time
 
-The Solution: .tmp → sync → mv -f
+
+## The Solution: .tmp → sync → mv -f
 
 1. User writes to a temporary file
 ```bash
@@ -50,8 +52,9 @@ mv -f /run/user/1000/cache/artifact.tar.gz.tmp /run/user/1000/cache/artifact.tar
 
 ---
 
-The Full Flow
+### The Full Flow
 
+```
 User builds artifact
     ↓
 Writes to .tmp file
@@ -67,8 +70,7 @@ Root reads complete file
 Extracts and deploys
     ↓
 Removes the trigger file
-
-
+```
 ---
 
 ## Benefits
@@ -80,7 +82,6 @@ Removes the trigger file
 | **No permission issues** | User writes to user-owned directory, root reads |
 | **Event-driven** | Systemd path unit triggers instantly |
 
-✅ Preview
 
 ## Why This Works
 
@@ -92,9 +93,10 @@ Removes the trigger file
 | Path unit | Only sees the final file, never the `.tmp` |
 
 
-🎯 Why Atomic Handoff Is So Important
+## 🎯 Why Atomic Handoff Is So Important
 
 
+```
 User Space (UID 1000)          Root Space (UID 0)
 ─────────────────────────────────────────────────
 
@@ -112,6 +114,7 @@ User Space (UID 1000)          Root Space (UID 0)
 6. ─────────────────────────    Extracts and deploys
                                 ─────────────────────
 7. ─────────────────────────    Removes trigger file
+```
 
 
 📝 The Journey to Atomic Handoff
