@@ -20,18 +20,22 @@
 
 ## Example
 
-```bash
-# Vendor layer (minimal trigger)
-/usr/lib/systemd/system/sirius-os-virtualization-libvirt-provision.service
 
-# Runtime layer (full service)
+Vendor layer (minimal trigger)
+```bash
+/usr/lib/systemd/system/sirius-os-virtualization-libvirt-provision.service
+```
+
+Runtime layer (full service)
+```bash
 /etc/systemd/system/virtnetworkd.service
 ```
 
-Benefit        Explanation
--------------  ---------------------------------------------------------------
-Transparency   Users can see what's running
-Control        Users can disable or modify services
-Auditability   Clear separation between vendor and user configuration
-Self-healing   If files are missing from /etc/, provisioning can restore them
+| Benefit | Explanation |
+|---|---|
+| Transparency | Users can see what's running |
+| Control | Users can disable or modify services |
+| Auditability | Clear separation between vendor and user configuration |
+| Self-healing | If files are missing from `/etc/`, provisioning can restore them |
+
 

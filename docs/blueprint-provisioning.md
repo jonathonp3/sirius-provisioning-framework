@@ -10,11 +10,12 @@ On immutable systems (`rpm-ostree`), `/usr/` is read-only during runtime. If ser
 
 By storing blueprints in `/usr/share/` and deploying them to `/etc/` at first boot, we achieve:
 
-Benefit        Explanation
--------------  ---------------------------------------------
-Transparency   Users can see what's running
-Control        Users can disable or modify services
-Auditability   The system state is clear and verifiable
+| Benefit | Explanation |
+|---|---|
+| Transparency | Users can see what's running |
+| Control | Users can disable or modify services |
+| Auditability | The system state is clear and verifiable |
+
 
 ## How It Works
 

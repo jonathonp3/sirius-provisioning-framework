@@ -27,40 +27,20 @@ sirius-os-<package>/
 
 ## 🔧 Scripts and Their Purpose
 
-Script/File                              Purpose                                      Required?
----------------------------------------  -------------------------------------------  ---------
-<package>.sysusers                        Creates groups on the live system           ✅ Yes
-                                         at first boot
+| Script/File | Purpose | Required? |
+|---|---|---|
+| `<package>.sysusers` | Creates groups on the live system at first boot | ✅ Yes |
+| `<package>.tmpfiles` | Creates directories with correct ownership | ✅ Yes |
+| `<package>-provision.sh` | Main provisioning logic—deploys blueprints to `/etc/` | ✅ Yes |
+| `<package>-provision.service` | Systemd service that triggers the provisioning script on first boot | ✅ Yes |
+| `<package>-uninstall-provision.sh` | Creates the dormant uninstaller service and script | ✅ Yes |
+| `<package>-uninstall-provision.service` | Systemd service that creates the dormant uninstaller | ✅ Yes |
+| `<package>-deploy.sh` | Root-level deployment logic for the user-to-root handoff | ⚠️ Only if needed |
+| `<package>-deploy.path` | Systemd path unit that triggers root deployment | ⚠️ Only if needed |
+| `<package>-extract.sh` | User-level extraction logic for building in containers | ⚠️ Only if needed |
+| `<package>-extract.timer` | User-level timer for periodic checks/updates | ⚠️ Only if needed |
+| `<package>-extract.service` | User-level service that runs the extraction script | ⚠️ Only if needed |
 
-<package>.tmpfiles                        Creates directories with correct            ✅ Yes
-                                         ownership
-
-<package>-provision.sh                    Main provisioning logic—deploys             ✅ Yes
-                                         blueprints to /etc/
-
-<package>-provision.service               Systemd service that triggers the            ✅ Yes
-                                         provisioning script on first boot
-
-<package>-uninstall-provision.sh          Creates the dormant uninstaller             ✅ Yes
-                                         service and script
-
-<package>-uninstall-provision.service     Systemd service that creates the             ✅ Yes
-                                         dormant uninstaller
-
-<package>-deploy.sh                       Root-level deployment logic for the         ⚠️ Only if needed
-                                         user-to-root handoff
-
-<package>-deploy.path                     Systemd path unit that triggers root        ⚠️ Only if needed
-                                         deployment
-
-<package>-extract.sh                      User-level extraction logic for             ⚠️ Only if needed
-                                         building in containers
-
-<package>-extract.timer                   User-level timer for periodic               ⚠️ Only if needed
-                                         checks/updates
-
-<package>-extract.service                 User-level service that runs the             ⚠️ Only if needed
-                                         extraction script
 
 ## 📋 The SPF Lifecycle
 
@@ -187,29 +167,31 @@ sirius-os-pia-installer/
 
 ## 🎯 Summary: The SPF Core Pattern
 
-Component              Purpose
----------------------  ------------------------------------------------------
-sysusers.d             Create groups on the live system at first boot
-tmpfiles.d             Create directories with correct ownership
-Provisioning service   Deploy blueprints to /etc/ on first boot
-Provisioning script    Main logic for setting up the system
-Dormant uninstaller    Clean up everything on RPM removal
-Blueprints             Templates stored in /usr/share/ and deployed to /etc/
-Marker files           Ensure provisioning runs only once
+| Component | Purpose |
+|---|---|
+| `sysusers.d` | Create groups on the live system at first boot |
+| `tmpfiles.d` | Create directories with correct ownership |
+| Provisioning service | Deploy blueprints to `/etc/` on first boot |
+| Provisioning script | Main logic for setting up the system |
+| Dormant uninstaller | Clean up everything on RPM removal |
+| Blueprints | Templates stored in `/usr/share/` and deployed to `/etc/` |
+| Marker files | Ensure provisioning runs only once |
+
 
 
 
 ## 🎯 Why SPF Works Well
 
 
-Aspect           Why It Works
----------------  ---------------------------------------------------------------
-Simplicity       Uses existing systemd tools—no new dependencies
-Consistency      Same pattern across all implementations
-Reliability      Tested on real systems (My family are using it)
-Reproducibility  Every installation starts from a clean state
-Transparency     Users can see and control everything in /etc/
-Cleanup          Dormant uninstallers ensure complete removal which allows for a clean reinstall
+| Aspect | Why It Works |
+|---|---|
+| Simplicity | Uses existing systemd tools—no new dependencies |
+| Consistency | Same pattern across all implementations |
+| Reliability | Tested on real systems (my family is using it) |
+| Reproducibility | Every installation starts from a clean state |
+| Transparency | Users can see and control everything in `/etc/` |
+| Cleanup | Dormant uninstallers ensure complete removal, allowing for a clean reinstall |
+
 
 
 ## 💡 What Makes SPF Logical
@@ -225,13 +207,13 @@ Each step builds on the previous one. No hacking or workarounds are required.
 
 ## 🚀 What Makes SPF Valuable
 
-Benefit                  Explanation
------------------------  -----------------------------------------------------
-Solves a real problem    %post scripts don't work on rpm-ostree
-Uses standard tools      systemd, sysusers.d, tmpfiles.d
-Proven                   Two working implementations
-Reusable                 The pattern can be applied to other packages
-Professional             Clean, auditable, self-cleaning
+| Benefit | Explanation |
+|---|---|
+| Solves a real problem | `%post` scripts don't work on rpm-ostree |
+| Uses standard tools | systemd, `sysusers.d`, `tmpfiles.d` |
+| Proven | Two working implementations |
+| Reusable | The pattern can be applied to other packages |
+| Professional | Clean, auditable, self-cleaning |
 
 
 ## 📝 Summary Statement
@@ -246,11 +228,10 @@ I built a framework for making Fedora Workstation and other software work on Sil
 
 ## 🏆 The Journey
 
-Before                         After
------------------------------  ---------------------------------
-One-off fix for PIA            Reusable framework
-Solving problems one by one    Solving problems with a pattern
-"It works for me"              "It works for everyone"
-Unknown                        Documented and shareable
-
+| Before | After |
+|---|---|
+| One-off fix for PIA | Reusable framework |
+| Solving problems one by one | Solving problems with a pattern |
+| "It works for me" | "It works for everyone" |
+| Unknown | Documented and shareable |
 

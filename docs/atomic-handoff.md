@@ -184,12 +184,13 @@ sync /run/user/1000/cache/artifact.tar.gz.tmp
 mv -f /run/user/1000/cache/artifact.tar.gz.tmp /run/user/1000/cache/artifact.tar.gz
 ```
 
-Component          Purpose                                      
------------------  -------------------------------------------  
-.tmp extension     Avoid path unit triggering mid write        
-sync               Ensure file is fully written                 
-mv -f              Atomic rename — instant, complete            
-Systemd path unit  Trigger root deployment                   
+| Component | Purpose |
+|---|---|
+| `.tmp` extension | Avoid path unit triggering mid-write |
+| `sync` | Ensure the file is fully written |
+| `mv -f` | Atomic rename—instant and complete |
+| Systemd path unit | Trigger root deployment |
+     
 
 
 ## Phase 5: The RPM Challenge
@@ -233,14 +234,12 @@ Removes the trigger file
 
 ## What I Learn't from this project
 
-Lesson                              Why It Mattered
-----------------------------------  -----------------------------------------------
-PAM is unreliable for background    Systemd user services + linger is the right
-services                            approach
+| Lesson | Why It Mattered |
+|---|---|
+| PAM is unreliable for background services | Systemd user services + linger is the right approach |
+| `/tmp` has limitations | Best to use `/run/user/1000/` for user-owned artifacts |
+| `sync` prevents file corruption | Atomic handoff is a better approach |
 
-/tmp has limitations                Best to use /run/user/1000/ for user-owned artifacts
-
-sync prevents file corruption       Atomic handoff is a better approach
 
 
 Insight
