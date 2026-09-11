@@ -233,14 +233,14 @@ I have not tested advanced LLMs — only the free versions.
 
 Despite this limitation, the free versions were sufficient to:
 
-Use Case          What AI Provided
-----------------  ------------------------------------------------
-Exploration       Documentation and unfamiliar concepts
-Code Generation   Examples and implementation suggestions
-Problem Solving   Potential approaches to problems
-Debugging         Cryptic errors which required human reasoning
-Documentation     Refinement and clarification
-System Analysis   Deep overview of processes
+| Use Case | What AI Provided |
+|---|---|
+| Exploration | Documentation and unfamiliar concepts |
+| Code Generation | Examples and implementation suggestions |
+| Problem Solving | Potential approaches to problems |
+| Debugging | Cryptic errors requiring human reasoning |
+| Documentation | Refinement and clarification |
+| System Analysis | Deep overview of processes |
 
 
 Using Free Tools Effectively
