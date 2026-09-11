@@ -46,6 +46,7 @@ sirius-os-<package>/
 
 ## 📋 The SPF Lifecycle
 
+```
 ┌─────────────────────────────────────────────────────────────────────────────┐
 │                         RPM BUILD / LAYERING                              │
 ├─────────────────────────────────────────────────────────────────────────────┤
@@ -111,9 +112,11 @@ sirius-os-<package>/
 │      • Removes itself                                                    │
 │                                                                           │
 └─────────────────────────────────────────────────────────────────────────────┘
+```
 
 ## 📝 Example: sirius-os-virtualization Structure
 
+```
 sirius-os-virtualization/
 ├── spec/
 │   └── sirius-os-virtualization.spec
@@ -139,9 +142,10 @@ sirius-os-virtualization/
 └── systemd/
     ├── sirius-os-virtualization-libvirt-provision.service
     └── sirius-os-virtualization-uninstall-provision.service
-    
+```
 ## 📝 Example: sirius-os-pia-installer Structure
 
+```
 sirius-os-pia-installer/
 ├── spec/
 │   └── sirius-os-pia-installer.spec
@@ -165,7 +169,7 @@ sirius-os-pia-installer/
     ├── piavpn-uninstall-provision.service
     ├── piavpn-extract.timer          # Deployed to /etc/systemd/user/
     └── piavpn-deploy.path            # Deployed to /etc/systemd/system/
-
+```
 
 ## 🎯 Summary: The SPF Core Pattern
 
