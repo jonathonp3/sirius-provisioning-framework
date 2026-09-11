@@ -117,9 +117,8 @@ User Space (UID 1000)          Root Space (UID 0)
 ```
 
 
-📝 The Journey to Atomic Handoff
+## 📝 The Journey to Atomic Handoff
 
-## The Journey to Atomic Handoff
 
 ### The Problem
 
@@ -159,12 +158,13 @@ Step  What I Did                                      Result
 The extraction service now runs reliably—no PAM, no login required.
 
 
-Phase 3: The /run Discovery
+## Phase 3: The /run Discovery
 
-Location          Problem
-----------------  ------------------------------------------------
-/tmp              Sticky bit caused permission issues
-/run/user/1000/   User-owned, root-readable, RAM-based
+| Location | Problem |
+|---|---|
+| `/tmp` | Sticky bit caused permission issues |
+| `/run/user/1000/` | User-owned, root-readable, RAM-based |
+
 
 Moving to /run/user/1000/ solved the permission issues. The user has full control while root can read the artifacts.
 
@@ -218,6 +218,7 @@ This was time consuming process. The RPM had to work correctly and consistently 
 
 After all the testing, the pattern was complete:
 
+```
 User builds in Distrobox
     ↓
 Writes to .tmp file
@@ -233,7 +234,7 @@ Root reads complete file
 Extracts and deploys
     ↓
 Removes the trigger file
-
+```
 
 ## What I Learn't from this project
 
@@ -247,7 +248,7 @@ Removes the trigger file
 
 Insight
 
-"The handoff allows file to be moved without corruption, race conditions and permission issues."
+The handoff allows file to be moved without corruption, race conditions and permission issues.
 
 
 
