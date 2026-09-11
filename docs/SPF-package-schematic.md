@@ -4,25 +4,27 @@
 
 Required Components for Any SPF Implementation
 
-sirius-os-PACKAGE/
+```
+sirius-os-<package>/
 ├── spec/
-│   └── sirius-os-PACKAGE.spec
+│   └── sirius-os-<package>.spec
 ├── sysusers.d/
-│   └── sirius-os-PACKAGE.conf
+│   └── sirius-os-<package>.conf
 ├── tmpfiles.d/
-│   └── sirius-os-PACKAGE.conf
+│   └── sirius-os-<package>.conf
 ├── usr-share/
-│   └── PACKAGE/                         # Blueprints (templates)
+│   └── <package>/                    # Blueprints (templates)
 │       ├── *.service
 │       ├── *.timer
 │       └── *.path
 ├── libexec/
-│   ├── PACKAGE-provision.sh
-│   ├── PACKAGE-deploy.sh                # Optional user-to-root handoff
-│   └── PACKAGE-uninstall-provision.sh
+│   ├── <package>-provision.sh
+│   ├── <package>-deploy.sh           # If user-to-root handoff
+│   └── <package>-uninstall-provision.sh
 └── systemd/
-    ├── PACKAGE-provision.service
-    └── PACKAGE-uninstall-provision.service
+    ├── <package>-provision.service
+    └── <package>-uninstall-provision.service
+```
     
 
 ## 🔧 Scripts and Their Purpose
