@@ -18,7 +18,7 @@ sirius-os-<package>/
 │       └── *.path
 ├── libexec/
 │   ├── <package>-provision.sh
-│   ├── <package>-deploy.sh           # If user-to-root handoff
+│   ├── <package>-deploy.sh           # If user-to-root handoff is required
 │   └── <package>-uninstall-provision.sh
 └── systemd/
     ├── <package>-provision.service
