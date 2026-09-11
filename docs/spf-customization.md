@@ -39,14 +39,15 @@ SPF is not just a fix for virtualization. It is a **framework** for managing com
 https://github.com/jonathonp3/sirius-provisioning-framework/blob/main/docs/SPF-package-schematic.md
 Use the [SPF Package Schematic](SPF-package-schematic.md) as your template:
 
+```
 sirius-os-<package>/
-├── spec/
-├── sysusers.d/
-├── tmpfiles.d/
-├── usr-share/
-├── libexec/
-└── systemd/
-
+├── spec/          # RPM spec file
+├── sysusers.d/    # Group creation
+├── tmpfiles.d/    # Directory creation
+├── usr-share/     # Blueprints (templates)
+├── libexec/       # Provisioning scripts
+└── systemd/       # Provisioning services
+```
 
 ### Step 2: Identify What's Missing
 
