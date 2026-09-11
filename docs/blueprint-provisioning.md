@@ -10,9 +10,11 @@ On immutable systems (`rpm-ostree`), `/usr/` is read-only during runtime. If ser
 
 By storing blueprints in `/usr/share/` and deploying them to `/etc/` at first boot, we achieve:
 
-- **Transparency** — Users can see what's running
-- **Control** — Users can disable or modify services
-- **Auditability** — The system state is clear and verifiable
+Benefit        Explanation
+-------------  ---------------------------------------------
+Transparency   Users can see what's running
+Control        Users can disable or modify services
+Auditability   The system state is clear and verifiable
 
 ## How It Works
 
@@ -24,8 +26,6 @@ By storing blueprints in `/usr/share/` and deploying them to `/etc/` at first bo
 
     On removal, dormant uninstaller cleans up
 
-text
-
 
 ## Example: Virtualization Groups
 
@@ -33,20 +33,14 @@ text
 # Blueprint in /usr/share/
 g libvirt-qemu - -
 g virtnetwork  - -
-
-# Deployed to /etc/ at first boot via sysusers.d
+```
+## Deployed to /etc/ at first boot via sysusers.d
 
 Example: Service Template
-bash
-
+```bash
 # Blueprint in /usr/share/wolf-os/pia/
 piavpn-deploy.service
+```
 
-# Deployed to /etc/systemd/system/ at first boot
 
-Benefits
-Benefit	Explanation
-Transparency	Users can see what's installed
-Control	Users can disable services
-Auditability	Clear system state
-Self-healing	Re-provisions on next boot if missing
+

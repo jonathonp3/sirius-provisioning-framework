@@ -3,9 +3,11 @@
 ## What It Is
 
 The Dormant Uninstaller Pattern is a fail-safe mechanism that ensures complete system cleanup when an RPM is removed, even though the removal happens in a different deployment.
+
 Why It's Needed
 
 When you rpm-ostree remove a package, the new deployment no longer contains that package. If the uninstall script were part of the package, it would be gone, leaving no way to clean up the system's state.
+
 How It Works
 
 1. Provisioning creates a "dormant" uninstaller service in /etc/
@@ -13,7 +15,6 @@ How It Works
 3. When the RPM is removed, the condition passes
 4. The service runs on the next boot, removing system changes.
 5. The service removes itself after completion
-
 
 
 ## Key Condition
@@ -44,7 +45,7 @@ Phase 4: System is Clean
     → No artifacts remain
     → Reinstall is reliable
 
-Example: PIA VPN Uninstaller
+## Example: PIA VPN Uninstaller
 ini
 
 [Unit]

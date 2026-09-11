@@ -206,10 +206,10 @@ Aspect           Why It Works
 ---------------  ---------------------------------------------------------------
 Simplicity       Uses existing systemd tools—no new dependencies
 Consistency      Same pattern across all implementations
-Reliability      Tested on real systems (My family are running it)
+Reliability      Tested on real systems (My family are using it)
 Reproducibility  Every installation starts from a clean state
 Transparency     Users can see and control everything in /etc/
-Cleanup          Dormant uninstallers ensure complete removal which allows for a clean resinstall
+Cleanup          Dormant uninstallers ensure complete removal which allows for a clean reinstall
 
 
 ## 💡 What Makes SPF Logical
@@ -230,21 +230,18 @@ Benefit                  Explanation
 Solves a real problem    %post scripts don't work on rpm-ostree
 Uses standard tools      systemd, sysusers.d, tmpfiles.d
 Proven                   Two working implementations
-Reusable                 The pattern can be applied to any package
+Reusable                 The pattern can be applied to other packages
 Professional             Clean, auditable, self-cleaning
 
 
 ## 📝 Summary Statement
 
-> **"I didn't just fix a problem (PIA installer on Silverblue) — I built a framework that makes fixing problems repeatable (adapted it to virt-manager)."**
 
 The first problem was PIA VPN on Silverblue. I solved it with my systemd-based, first-boot provisioning approach.
 
-The second problem was virt-manager on Silverblue and Bazzite. I used the same pattern and it worked better than my previous approach (required manual intervention).
+The second problem was virt-manager on Silverblue and Bazzite. I used the same pattern for the rpm and as i predicted it worked better than my previous approach which required manual intervention from the user.
 
-This is when I realized i had built a framework for making Fedora Workstation software work on Silverblue.
-
-**The Sirius Provisioning Framework (SPF) is the result.**
+I built a framework for making Fedora Workstation and other software work on Silverblue.
 
 
 ## 🏆 The Journey

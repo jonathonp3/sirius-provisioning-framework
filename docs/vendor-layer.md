@@ -17,6 +17,7 @@
 2. **First boot**: Provisioning copies templates from `/usr/share/` to `/etc/`
 3. **Runtime** (`/etc/systemd/system/`): Services run from here, user can disable or modify
 
+
 ## Example
 
 ```bash
@@ -33,6 +34,4 @@ Transparency   Users can see what's running
 Control        Users can disable or modify services
 Auditability   Clear separation between vendor and user configuration
 Self-healing   If files are missing from /etc/, provisioning can restore them
-
-
 

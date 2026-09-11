@@ -10,7 +10,7 @@ When a user builds an artifact (e.g., in a Distrobox container) and root needs t
 
     Permission issues — User can't write to root directories
 
-    Race conditions — Both processes access the same file
+    Race conditions — Two processes access the same file at the same time
 
 The Solution: .tmp → sync → mv -f
 
@@ -163,7 +163,7 @@ Location          Problem
 /tmp              Sticky bit caused permission issues
 /run/user/1000/   User-owned, root-readable, RAM-based
 
-Moving to /run/user/1000/ solved the permission issues. User had full control, root could still read the artifacts.
+Moving to /run/user/1000/ solved the permission issues. The user has full control while root can read the artifacts.
 
 
 ## Phase 4: Solving the File Corruption Problem
@@ -184,15 +184,15 @@ sync /run/user/1000/cache/artifact.tar.gz.tmp
 mv -f /run/user/1000/cache/artifact.tar.gz.tmp /run/user/1000/cache/artifact.tar.gz
 ```
 
-Component          Purpose                                      Who Suggested
------------------  -------------------------------------------  ------------
-.tmp extension     Avoid path unit triggering mid-write         Human
-sync               Ensure file is fully written                 AI
-mv -f              Atomic rename — instant, complete             Human
-Systemd path unit  Trigger root deployment                       Human
+Component          Purpose                                      
+-----------------  -------------------------------------------  
+.tmp extension     Avoid path unit triggering mid write        
+sync               Ensure file is fully written                 
+mv -f              Atomic rename — instant, complete            
+Systemd path unit  Trigger root deployment                   
 
 
-Phase 5: The RPM Challenge
+## Phase 5: The RPM Challenge
 
 The hardest part was testing the RPM deployment.
 
@@ -208,7 +208,7 @@ In a workstation environment, changes are immediate. I could edit files and test
 
     Repeat
 
-This was time-consuming and unforgiving—but necessary. The RPM had to work correctly and consistently. No breakage.
+This was time consuming process. The RPM had to work correctly and consistently with out error.
 
 ## The Result: Atomic Handoff
 
@@ -231,133 +231,21 @@ Extracts and deploys
 Removes the trigger file
 
 
-## What I Learned
+## What I Learn't from this project
 
-Lesson                              Why It Matters
+Lesson                              Why It Mattered
 ----------------------------------  -----------------------------------------------
 PAM is unreliable for background    Systemd user services + linger is the right
 services                            approach
 
-/tmp has permission issues          Use /run/user/1000/ for user-owned artifacts
+/tmp has limitations                Best to use /run/user/1000/ for user-owned artifacts
 
-sync prevents file corruption       Atomic handoff is essential for reliability
-
-
-The Key Insight
-"The handoff isn't just about moving files—it's about moving them reliably,
-without corruption, race conditions, or permission issues."
-
-The Atomic Handoff pattern is the result of all this work. It's not a hack or a workaround—it's a carefully designed solution to complicated problem. 
+sync prevents file corruption       Atomic handoff is a better approach
 
 
-### 🎯 Why This Story Matters
+Insight
 
-| Element | Purpose |
-|---------|---------|
-| **The journey** | Shows the persistence required |
-| **The failures** | Honest about what didn't work |
-| **The breakthroughs** | Celebrate the moments of insight |
-| **The AI collaboration** | Honest about how AI helped |
-| **The result** | The Atomic Handoff pattern |
-
-### Testing the RPM: The Hardest Part
-
-The most difficult phase was testing the **RPM deployment**.
-
-In a workstation environment, changes are immediate. I could edit files and test instantly. But with the RPM, each change required:
-
-1. Building the RPM
-2. Installing it (`rpm-ostree install`)
-3. Rebooting into the new deployment
-4. Testing
-5. Repeating the cycle
-
-
-
-**What works in a workstation may not behave the same way with rpm-ostree.**
-
-The RPM environment is different—more constrained, more unpredictable. A solution that worked perfectly in a test directory could fail when layered into an immutable system.
-
-This was time-consuming and unforgiving—but necessary. The RPM had to work correctly for users, not just for me.
-
----
-
-### AI as a Collaborator, Not a Replacement
-
-AI suggested `sync` when I was solving the file corruption problem. It was a good suggestion—but like all code, it needed **testing and evaluation for stability**.
-
-| Role | Who | What |
-|------|-----|------|
-| **Direction** | Human | The overall architecture and design |
-| **Suggestions** | AI | Specific approaches, like `sync` |
-| **Testing** | Human | Each option tested one by one |
-| **Evaluation** | Human | Determining what works and what doesn't |
-| **Integration** | Human | Bringing it all together into a working system |
-
-**AI is a collaborator, not a replacement.** It accelerates exploration and suggests possibilities, but it doesn't replace human judgment, testing, or responsibility.
-
-> *"AI suggested sync. Like all code, it needs testing and evaluation for stability."*
-
-This is the reality of AI-assisted development—and it's why the final result is reliable.
-
-
-✅ Preview
-
-Testing the RPM: The Hardest Part
-
-The most difficult phase was testing the RPM deployment.
-
-In a workstation environment, changes are immediate. I could edit files and test instantly. But with the RPM, each change required:
-
-    Building the RPM
-
-    Installing it (rpm-ostree install)
-
-    Rebooting into the new deployment
-
-    Testing
-
-    Repeating the cycle
-
-What works in a workstation may not behave the same way with rpm-ostree.
-
-The RPM environment is different—more constrained, more unpredictable. A solution that worked perfectly in a test directory could fail when layered into an immutable system.
-
-This was time-consuming and unforgiving—but necessary. The RPM had to work correctly for users, not just for me.
-
-
-AI as a Collaborator, Not a Replacement
-
-AI suggested sync when I was solving the file corruption problem. It was a good suggestion—but like all code, it needed testing and evaluation for stability.
-
-Role         Who    What
------------  -----  -----------------------------------------------
-Direction    Human  The overall architecture and design
-Suggestions  AI     Specific approaches, like sync
-Testing      Human  Each option tested one by one
-Evaluation   Human  Determining what works and what doesn't
-Integration  Human  Bringing it all together into a working system
-
-
-AI is a collaborator, not a replacement. It accelerates exploration and suggests possibilities, but it doesn't replace human judgment, testing, or responsibility.
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+"The handoff allows file to be moved without corruption, race conditions and permission issues."
 
 
 

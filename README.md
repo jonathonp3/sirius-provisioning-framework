@@ -224,7 +224,53 @@ AI tools were not able to solve every technical problem in the project. At times
 
 Resolving problems such as this required human reasoning: understanding the system, identifying underlying issues, testing each hypothesis, and changing the approach when necessary.
 
-I therefore view AI-assisted development as a collaborative process. AI contributes suggestions and accelerates exploration, while I provide the direction, judgment, verification, and final decisions. I read and evaluate all generated code to ensure that I understand it and that it behaves as expected. I modify or replace it whenever necessary, and I remain responsible for the resulting project.
+I therefore view AI-assisted development as a collaborative process. AI contributes suggestions and accelerates exploration, while I provide the direction, judgement, verification, and final decisions. I read and evaluate all generated code to ensure that I understand it and that it behaves as expected. I modify or replace it whenever necessary, and I remain responsible for the resulting project.
+
+
+## AI Tools Used
+
+I have not tested advanced LLMs — only the free versions.
+
+Despite this limitation, the free versions were sufficient to:
+
+Use Case          What AI Provided
+----------------  ------------------------------------------------
+Exploration       Documentation and unfamiliar concepts
+Code Generation   Examples and implementation suggestions
+Problem Solving   Potential approaches to problems
+Debugging         Cryptic errors which required human reasoning
+Documentation     Refinement and clarification
+System Analysis   Deep overview of processes
+
+
+Using Free Tools Effectively
+
+Using free tools does not diminish the outcome. It demonstrates that effective AI-assisted development does not require expensive tools. Clear thinking, careful evaluation, and a willingness to test and iterate is enough.
+
+To best use free tools, I suggest you:
+
+    Read everything the AI provides — `Evaluate what is true and what is not'
+
+    Investigate as many possibilities as you can — Explore alternatives
+
+    Document your journey — The more information you provide, the smarter it gets. Vibe coding is a complete waste of time and unproductive.
+
+For me, AI-assisted development is a two-way street. The AI learns from the project. The more information I provide and document ( I keep detailed notes) as well as the avenues taken, the smarter it gets. This was the magic sauce for myself in getting this and other projects up and running and completed. 
+
+
+## What This Means for SPF
+
+| Aspect | Reality |
+|--------|---------|
+| **AI tools used** | Free versions only |
+| **Cost** | Zero |
+| **Effectiveness** | Sufficient for the task provided you are prepared to spend a lot of time on the project and do some serious problem solving |
+| **Limitations** | Can produce incorrect code, can become confused with repetition and redundancy |
+| **Human role** | Direction, testing, code evaluation and integration |
+
+The result is a stable framework built with free tools, human judgement, and a lot of testing.
+
+The purpose of AI assisted development for myself is to learn as much as I can about the inner workings of the Linux operating system. This project needed to be readable, have logic, be not overwhelming and must be reproducible without fragility.
 
 License
 

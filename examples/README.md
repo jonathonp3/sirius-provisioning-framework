@@ -1,6 +1,8 @@
-SPF Examples
-Implementations of the Sirius Provisioning Framework
-1. sirius-os-virtualization
+# SPF Examples
+
+## Implementations of the Sirius Provisioning Framework
+
+1. `sirius-os-virtualization`
 
 One-command setup of virt-manager on atomic systems (Silverblue, Kinoite, Bazzite).
 
@@ -14,7 +16,8 @@ What it does:
 
     Configures the default NAT network
 
-GitHub: sirius-os-virtualization
+GitHub: `sirius-os-virtualization`
+
 2. sirius-os-pia-installer
 
 User-level extraction and root-level deployment of PIA VPN on atomic systems.
@@ -33,7 +36,8 @@ What it does:
 
     Dormant uninstaller for complete cleanup
 
-GitHub: sirius-os-pia-installer
+GitHub: `sirius-os-pia-installer`
+
 Contributing
 
 If you've built something using SPF, submit a PR to add it here!
