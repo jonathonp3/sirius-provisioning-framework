@@ -6,7 +6,13 @@ Blueprint Provisioning is the practice of storing service templates in `/usr/sha
 
 ## Why It's Needed
 
-On immutable systems (`rpm-ostree`), `/usr/` is read-only during runtime. If services are placed in `/usr/lib/systemd/system/`, they cannot be disabled or modified by the admin.
+On immutable systems using rpm-ostree, /usr/ is read-only at runtime. As a result of this SPF stores its provisioning services in:
+
+`/usr/lib/systemd/system/` 
+
+These services run automatically when the system boots into a new deployment, allowing SPF to perform the initial software configuration and first-time setup. The services and their accompanying provisioning scripts configure and enable other services in /etc, where root has write access. Administrators can then manage, enable, or disable those services as needed.
+
+`/usr/ belongs to the package; /etc/ belongs to the administrator. SPF respects that boundary by never leaving live configuration in /usr/.`
 
 By storing blueprints in `/usr/share/` and deploying them to `/etc/` at first boot, we achieve:
 

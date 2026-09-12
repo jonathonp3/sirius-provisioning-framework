@@ -2,7 +2,7 @@
 
 ## The Principle
 
-**Vendor-layer services should only be used to enable provisioning scripts—not to run services directly.**
+**Vendor-layer services is best used to enable provisioning scripts—not to run services directly.**
 
 ## Why This Matters
 
