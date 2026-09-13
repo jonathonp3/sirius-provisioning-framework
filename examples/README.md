@@ -35,9 +35,11 @@ What it does:
     Systemd path unit triggers root deployment
 
     Dormant uninstaller for complete cleanup
+    
 
 GitHub: `sirius-os-pia-installer`
 
 Contributing
 
 If you've built something using SPF, submit a PR to add it here!
+
