@@ -1,0 +1,20 @@
+[Unit]
+Description=Sirius OS: user-level extraction for template
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/bash /usr/libexec/sirius/template-extract.sh
+
+# Extraction can take minutes on slow networks
+TimeoutStartSec=0
+# Don't kill Podman sub-processes if the main script hiccups
+KillMode=process
+# Container cleanup warnings should not fail the unit
+SuccessExitStatus=0 15
+
+RemainAfterExit=yes
+
+[Install]
+WantedBy=default.target

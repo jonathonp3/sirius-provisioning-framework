@@ -1,0 +1,8 @@
+[Unit]
+Description=Sirius OS: watch for template staging archive
+
+[Path]
+PathExists=/run/user/1000/cache/template/template-stage.tar.gz
+
+[Install]
+WantedBy=multi-user.target

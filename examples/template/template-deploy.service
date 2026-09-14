@@ -1,0 +1,13 @@
+[Unit]
+Description=Sirius OS: root-level deployment for template
+After=template-provision.service
+After=user@1000.service
+
+[Service]
+Type=oneshot
+User=root
+ExecStart=/usr/bin/bash /usr/libexec/sirius/template-deploy.sh
+ExecStartPost=/usr/bin/systemctl daemon-reload
+
+[Install]
+WantedBy=multi-user.target

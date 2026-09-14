@@ -1,0 +1,14 @@
+[Unit]
+Description=Sirius OS: provision template uninstaller
+After=local-fs.target
+# Only run if the uninstaller has not been provisioned yet
+ConditionPathExists=!/etc/systemd/system/template-uninstall.service
+
+[Service]
+Type=oneshot
+User=root
+ExecStart=/usr/bin/bash /usr/libexec/sirius/template-uninstall-provision.sh
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target
