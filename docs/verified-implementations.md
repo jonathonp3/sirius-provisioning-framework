@@ -200,26 +200,26 @@ The dormant uninstaller in sirius-os-protonvpn runs step 5 automatically on
 the first boot after the package is removed.
 
 
-### What SPF does
+### What SPF does after the seed
 
-    Ships protonvpn-stable.repo and owns it as %config(noreplace) so the
-    repository definition is versioned with the package once installed
+The package does not bootstrap the repository. That is handled by the tee step described above.
 
-    Pulls in proton-vpn-gnome-desktop as a tracked dependency
+Once the repository is available, sirius-os-protonvpn provides:
 
-    Runs a first-boot provisioning service for setup that RPM scriptlets cannot
-    perform under rpm-ostree
-
-    Generates a dormant uninstaller at first boot that removes the persistent
-    NetworkManager kill-switch profile on the boot after package removal
-
+- `protonvpn-stable.repo`, shipped and owned as `%config(noreplace)`, so the repository 
+   definition is versioned with the package
+- A first-boot provisioning service for setup tasks that RPM scriptlets 
+  cannot perform under `rpm-ostree`.
+- A dormant uninstaller, generated at first boot, that removes the persistent 
+  NetworkManager kill-switch profile during the boot following package removal.
 
 ### Result
 
-After the one-time repository seed, sirius-os-protonvpn installs in a
-single transaction with full GPG verification. Everything is tracked under
-LayeredPackages — no LocalPackages. On removal, the dormant uninstaller
-deletes any pvpn* NetworkManager connections, removes orphaned dummy
-interfaces, and restores network access without user intervention.
+After the one-time repository seed, sirius-os-protonvpn installs in a single transaction with full GPG verification.
 
+Everything is tracked under `LayeredPackages` ; no `LocalPackages` are created. When the package is removed, the dormant uninstaller:
+
+- Deletes any pvpn* NetworkManager connections.
+- Removes orphaned dummy interfaces.
+- Restores network access without user intervention.
 
