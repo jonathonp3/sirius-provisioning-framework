@@ -67,6 +67,14 @@ state directory.
 
 ## sirius-os-protonvpn
 
+### What it demonstrates
+
+This is the framework's reference implementation for the dormant uninstaller
+pattern. It isolates the pillar — no `sysusers.d`, no container build, no
+user-to-root handoff — so the cleanup mechanism can be read and copied on
+its own. The bug it reproduces is real and upstream, which makes it a
+better teaching example than a synthetic one would be.
+
 ### What it solves
 
 Two problems, one of which is reproduced end to end below.
@@ -226,4 +234,6 @@ Everything is tracked under `LayeredPackages` ; no `LocalPackages` are created. 
 - Deletes any pvpn* NetworkManager connections.
 - Removes orphaned dummy interfaces.
 - Restores network access without user intervention.
+
+
 
