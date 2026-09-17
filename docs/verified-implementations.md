@@ -200,18 +200,22 @@ The dormant uninstaller in sirius-os-protonvpn runs step 5 automatically on
 the first boot after the package is removed.
 
 
-### What SPF does after the seed
 
-The package does not bootstrap the repository. That is handled by the tee step described above.
+## What SPF does after the seed
+
+The package does not bootstrap the repository. That is handled by the tee
+step described above.
 
 Once the repository is available, sirius-os-protonvpn provides:
 
-- `protonvpn-stable.repo`, shipped and owned as `%config(noreplace)`, so the repository 
-   definition is versioned with the package
-- A first-boot provisioning service for setup tasks that RPM scriptlets 
-  cannot perform under `rpm-ostree`.
-- A dormant uninstaller, generated at first boot, that removes the persistent 
-  NetworkManager kill-switch profile during the boot following package removal.
+    `protonvpn-stable.repo`, shipped and owned as `%config(noreplace)`, so the
+    repository definition is versioned with the package
+
+    A first-boot provisioning service for setup tasks that RPM scriptlets
+    cannot perform under rpm-ostree
+
+    A dormant uninstaller that removes the persistent NetworkManager
+    kill-switch profile in the new deployment after the package has been removed
 
 ### Result
 
