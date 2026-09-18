@@ -132,6 +132,9 @@ Open virt-manager:
 virt-manager
 ```
 
+---
+
+
 ### 2. `sirius-os-pia-installer`
 
 The Challenge: PIA VPN is a proprietary binary that must be fetched from upstream, built in an isolated environment, and deployed system-wide—all while respecting the immutable nature of the host system.
@@ -152,7 +155,7 @@ What SPF Does:
 
     Dormant uninstaller ensures complete cleanup
 
-### Installation:
+Installation:
 
 ```bash
 sudo curl -Lo /etc/yum.repos.d/_copr_jonathonp3-sirius-os.repo \
@@ -161,7 +164,8 @@ sudo rpm-ostree install sirius-os-pia-installer
 sudo systemctl reboot
 ```
 
-### Verification:
+Verification:
+
 Check root deployment watcher is active
 ```bash
 sudo systemctl status piavpn-deploy.path --no-pager
@@ -214,6 +218,103 @@ Check version file (deployed version):
 cat /var/opt/piavpn/share/version.txt
 ```
 
+---
+
+
+### 3. `sirius-os-protonvpn`
+
+**The problem:** Proton VPN's Advanced kill switch writes a persistent
+NetworkManager profile to
+`/etc/NetworkManager/system-connections/pvpn-killswitch-perm.nmconnection`.
+On Fedora Atomic, `rpm-ostree remove` does not run `%preun` scriptlets, so
+that profile survives package removal. On the next boot, NetworkManager
+recreates a dummy interface (`pvpnksintrf1`) with a default route metric
+lower than any real connection, and the machine has no internet — with no
+VPN installed and no visible cause.
+
+**What SPF does:**
+
+1. Generates a dormant uninstaller at first boot, written into `/etc/`
+   where `rpm-ostree` does not track it.
+2. The dormant uninstaller triggers when the package's provisioning script
+   disappears, meaning the RPM has been removed.
+3. On the next boot, it deletes any `pvpn*` NetworkManager connections and
+   removes orphaned dummy interfaces, restoring network access.
+4. Ships `protonvpn-stable.repo` and owns it as `%config(noreplace)`, so the
+   repository definition is versioned with the package once the repository
+   has been seeded.
+5. Runs a first-boot provisioning service that enables the Proton
+   split-tunneling service — setup that `%post` cannot perform under
+   `rpm-ostree`.
+
+| Issue | Without SPF | With SPF |
+|---|---|---|
+| **Kill-switch profile after removal** | ❌ Persists in `/etc/` | ✅ Deleted on next boot |
+| **`pvpnksintrf1` dummy interface** | ❌ Recreated every boot | ✅ Removed |
+| **Network access after removal** | ❌ Broken, no visible cause | ✅ Restored automatically |
+| **Proton repo definition** | ❌ Hand-written, drifts | ✅ Owned by the package |
+
+**Prerequisite:** The Proton repository must be seeded before the first
+install. This is a `rpm-ostree` constraint, not a packaging choice:
+dependency resolution runs against the repositories visible on the currently
+booted deployment, so a `.repo` file shipped inside an RPM cannot satisfy
+that RPM's own `Requires:` in the same transaction.
+
+```bash
+sudo tee /etc/yum.repos.d/protonvpn-stable.repo <<'EOF'
+[protonvpn-fedora-stable]
+name=Proton VPN Fedora Stable repository
+baseurl=https://repo.protonvpn.com/fedora-$releasever-stable
+enabled=1
+gpgcheck=1
+gpgkey=https://repo.protonvpn.com/fedora-$releasever-stable/public_key.asc
+EOF
+```
+
+Installation:
+
+```bash
+sudo curl -Lo /etc/yum.repos.d/_copr_jonathonp3-sirius-os-protonvpn.repo \
+  https://copr.fedorainfracloud.org/coprs/jonathonp3/sirius-os-protonvpn/repo/fedora-44/jonathonp3-sirius-os-protonvpn-fedora-44.repo
+sudo rpm-ostree install sirius-os-protonvpn
+sudo systemctl reboot
+```
+
+Verification:
+
+Check the package is layered (not a LocalPackage):
+
+```bash
+rpm-ostree status
+```
+
+Check the provisioning service ran on first boot:
+
+```bash
+journalctl -u sirius-protonvpn-provision.service --no-pager
+cat /var/lib/sirius-protonvpn/provisioned
+```
+
+Check the dormant uninstaller was generated:
+```bash
+ls -l /etc/systemd/system/sirius-protonvpn-uninstall.service
+ls -l /etc/sirius-protonvpn-uninstall/
+```
+
+Check for any pvpn* NetworkManager connections (should be none until you
+enable the kill switch):
+
+```bash
+nmcli -t -f NAME,TYPE connection show | grep pvpn || echo "no pvpn connections"
+```
+
+Reproduction of the bug: See the
+[sirius-os-protonvpn README]https://github.com/jonathonp3/sirius-os-protonvpn/blob/main/README.md
+for the full seven-step reproduction of the kill-switch failure and its fix.
+
+---
+
+
 ## A Note on AI-Assisted Development
 
 This project was developed with the assistance of AI tools, but it was not produced by AI independently.
@@ -242,6 +343,10 @@ Despite this limitation, the free versions were sufficient to:
 | Documentation | Refinement and clarification |
 | System Analysis | Deep overview of processes |
 
+
+---
+
+
 ## Using Free Tools Effectively
 
 Using free tools does not diminish the outcome. It demonstrates that
@@ -251,10 +356,10 @@ enough.
 
 To best use free tools, I suggest you:
 
-- **Read everything the AI provides** — Evaluate what is true and what is
+- **Read everything the AI provided** — Evaluate what is true and what is
   not.
 - **Investigate as many possibilities as you can** — Explore alternatives.
-- **Document your journey** — I suggest you keep a record of what you've 
+- **Documenting your journey** — I suggest you keep a record of what you've 
   tried. I focus on what is working and what I have properly tested. I also 
   explain design decisions (code implementations) that did not work. I have found 
   disorganised notes are in fact worse than having no notes at all. The model 
@@ -266,8 +371,12 @@ In my opinion, this is the key to using AI effectively. By doing this, I have
 rapidly increased my knowledge. AI should not be a replacement for human
 ingenuity and as a result of this approach I now make better design decisions.
 
-Copying and pasting without doing the hard work is, for my purposes, a
+Copying and pasting without doing the hard work (reading and understanding) is, for my purposes, a
 complete waste of time. 
+
+
+---
+
 
 ## What This Means for SPF
 
