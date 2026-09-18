@@ -242,21 +242,32 @@ Despite this limitation, the free versions were sufficient to:
 | Documentation | Refinement and clarification |
 | System Analysis | Deep overview of processes |
 
+## Using Free Tools Effectively
 
-Using Free Tools Effectively
-
-Using free tools does not diminish the outcome. It demonstrates that effective AI-assisted development does not require expensive tools. Clear thinking, careful evaluation, and a willingness to test and iterate is enough.
+Using free tools does not diminish the outcome. It demonstrates that
+effective AI-assisted development does not require expensive tools. Clear
+thinking, careful evaluation, and a willingness to test and iterate is
+enough.
 
 To best use free tools, I suggest you:
 
-    Read everything the AI provides — `Evaluate what is true and what is not'
+- **Read everything the AI provides** — Evaluate what is true and what is
+  not.
+- **Investigate as many possibilities as you can** — Explore alternatives.
+- **Document your journey** — I suggest you keep a record of what you've 
+  tried. I focus on what is working and what I have properly tested. I also 
+  explain design decisions (code implementations) that did not work. I have found 
+  disorganised notes are in fact worse than having no notes at all. The model 
+  will most likely lose track of what has been decided upon and what the current 
+  focus is. The data needs to be thought through before it goes in.
 
-    Investigate as many possibilities as you can — Explore alternatives
+Always read the generated code. If you don't understand it, ask the LLM to explain it. 
+In my opinion, this is the key to using AI effectively. By doing this, I have
+rapidly increased my knowledge. AI should not be a replacement for human
+ingenuity and as a result of this approach I now make better design decisions.
 
-    Document your journey — The more information you provide, the smarter it gets. Vibe coding is a complete waste of time and unproductive.
-
-For me, AI-assisted development is a two-way street. The AI learns from the project. The more information I provide and document ( I keep detailed notes) as well as the avenues taken, the smarter it gets. This was the magic sauce for myself in getting this and other projects up and running and completed. 
-
+Copying and pasting without doing the hard work is, for my purposes, a
+complete waste of time. 
 
 ## What This Means for SPF
 
@@ -268,7 +279,8 @@ For me, AI-assisted development is a two-way street. The AI learns from the proj
 | **Limitations** | Can produce incorrect code, can become confused with repetition and redundancy |
 | **Human role** | Direction, testing, code evaluation and integration |
 
-The result is a stable framework built with free tools, human judgement, and a lot of testing.
+The result is a stable framework built with free tools, human judgement,
+and a lot of testing.
 
 The purpose of AI assisted development for myself is to learn as much as I can about the inner workings of the Linux operating system. This project needed to be readable, have logic, be not overwhelming and must be reproducible without fragility.
 
@@ -280,6 +292,7 @@ GPLv3
 
 - [GitHub Organization](https://github.com/jonathonp3)
 - [COPR Repository](https://copr.fedorainfracloud.org/coprs/jonathonp3/sirius-os/)
+- [Fedora COPR Sirius-OS ProtonVPN Repositary ](https://copr.fedorainfracloud.org/coprs/jonathonp3/sirius-os-protonvpn/).
 - [sirius-os-virtualization](https://github.com/jonathonp3/sirius-os-virtualization)
 - [sirius-os-pia-installer](https://github.com/jonathonp3/sirius-os-pia-installer)
 
