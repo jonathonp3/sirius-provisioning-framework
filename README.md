@@ -371,7 +371,7 @@ In my opinion, this is the key to using AI effectively. By doing this, I have
 rapidly increased my knowledge. AI should not be a replacement for human
 ingenuity and as a result of this approach I now make better design decisions.
 
-Copying and pasting without doing the hard work (reading and understanding) is, for my purposes, a
+Copying and pasting without doing the hard work is, for my purposes, a
 complete waste of time. 
 
 
