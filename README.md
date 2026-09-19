@@ -385,7 +385,7 @@ complete waste of time.
 | **AI tools used** | Free versions only |
 | **Cost** | Zero |
 | **Effectiveness** | Sufficient for the task provided you are prepared to spend a lot of time on the project and do some serious problem solving |
-| **Limitations** | Can produce incorrect code, can become confused with repetition and redundancy |
+| **Limitations** | Can produce incorrect code, can become confused creating repetition and redundancy |
 | **Human role** | Direction, testing, code evaluation and integration |
 
 The result is a stable framework built with free tools, human judgement,
