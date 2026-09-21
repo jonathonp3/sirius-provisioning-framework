@@ -128,6 +128,7 @@ Every SPF provisioning script must generate the dormant uninstaller at first boo
 # only files created at runtime persist across the deployment swap.
 ```
 
+
 ---
 
 
@@ -153,6 +154,22 @@ The fix is a condition on the deploy unit:
 ```ini
 ConditionPathExists=/usr/libexec/sirius-os/template-deploy.sh
 ```
+
+**When the condition is needed.** This fix applies to packages that
+enable a unit at runtime via `systemctl enable` — typically a deploy
+unit triggered by a path unit. The enablement symlink in `/etc/`
+survives package removal, so on the removal boot, systemd queues the
+unit and fails to load it.
+
+Packages that only enable shipped units do not need this condition.
+In those packages, the unit and its enablement symlink both live in
+`/usr/lib/systemd/system/`, and both disappear from the new deployment
+when the package is removed. There is nothing left to queue.
+
+`sirius-os-virtualization` is an example of the second case. Its
+provisioning service is shipped in the RPM and enabled at build time;
+it has no runtime-created deploy unit. The condition would be
+harmless there, but it would also be unnecessary.
 
 
 ### 2. Remove the enablement symlinks
