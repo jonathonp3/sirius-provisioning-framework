@@ -1,0 +1,3 @@
+# Groups required on the live system, created at first boot.
+# Only list groups that are missing from the base image.
+g template-group 954 - -

@@ -1,0 +1,10 @@
+[Unit]
+Description=Sirius OS: periodic extraction for template
+
+[Timer]
+OnBootSec=15min
+OnCalendar=monthly
+Persistent=true
+
+[Install]
+WantedBy=timers.target
