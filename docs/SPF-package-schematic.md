@@ -217,9 +217,9 @@ Each step builds on the previous one. No hacking or workarounds are required.
 |---|---|
 | Solves a real problem | `%post` scripts don't work on rpm-ostree |
 | Uses standard tools | systemd, `sysusers.d`, `tmpfiles.d` |
-| Proven | Two working implementations |
+| Proven | Three working implementations |
 | Reusable | The pattern can be applied to other packages |
-| Professional | Clean, auditable, self-cleaning |
+| Professional | Clean and auditable |
 
 
 ## 📝 Summary Statement
@@ -228,6 +228,14 @@ Each step builds on the previous one. No hacking or workarounds are required.
 The first problem was PIA VPN on Silverblue. I solved it with my systemd-based, first-boot provisioning approach.
 
 The second problem was virt-manager on Silverblue and Bazzite. I used the same pattern for the rpm and as i predicted it worked better than my previous approach which required manual intervention from the user.
+
+The third problem was Proton VPN on Silverblue. I used the same pattern
+again, this time to demonstrate the dormant uninstaller in isolation.
+The bug it reproduces is upstream and reproducible: Proton's Advanced
+kill switch writes a NetworkManager profile that survives
+`rpm-ostree remove`, and the machine loses internet with no visible
+cause. The package generates a dormant uninstaller at first boot that
+cleans up the profile on the boot after removal.
 
 I built a framework for making Fedora Workstation and other software work on Silverblue.
 

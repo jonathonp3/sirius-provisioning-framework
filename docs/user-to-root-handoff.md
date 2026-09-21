@@ -23,6 +23,7 @@ The challenge is moving artifacts from user to root without:
 
 
 ## The Solution: Systemd Path Units
+
 ```bash
 [Unit]
 Description=Watch for staging archive
@@ -33,6 +34,7 @@ PathExists=/run/user/1000/cache/app/artifact.tar.gz
 [Install]
 WantedBy=multi-user.target
 ```
+
 ## How It Works
 
 1. User builds artifact in Distrobox container
@@ -45,21 +47,22 @@ WantedBy=multi-user.target
 
 ## The Secure Handoff
 
-Step  Who   What
-----  ----  -----------------------------------------------
-1     User  Builds artifact in an isolated container
-2     User  Writes to /run/user/1000/cache/ (user-owned)
-3     Root  Systemd path unit triggers
-4     Root  Reads and deploys the artifact
-5     Root  Cleans up the trigger file
+
+| Step | Who  | What                                             |
+|------|------|--------------------------------------------------|
+| 1    | User | Builds artifact in an isolated container        |
+| 2    | User | Writes to `/run/user/1000/cache/` (user-owned)  |
+| 3    | Root | systemd path unit triggers                      |
+| 4    | Root | Reads and deploys the artifact                  |
+| 5    | Root | Cleans up the trigger file                      |
 
 
-Benefit      Explanation
------------  ------------------------------------------------
-Zero-sudo    User doesn't need root privileges
-Secure       User can't modify system directories
-Event-driven Immediate trigger, no polling
-Reliable     Atomic handoff ensures integrity
+| Benefit   | Explanation                                      |
+|-----------|--------------------------------------------------|
+| Zero-sudo | User doesn't need root privileges                |
+| Secure    | User can't modify system directories             |
+| Event-driven | Immediate trigger, no polling                 |
+| Reliable  | Atomic handoff ensures integrity                 |
 
 
 ## Example: PIA VPN Handoff
@@ -70,6 +73,7 @@ distrobox enter -n pia-factory -- bash -c "
     tar -czf /tmp/pia-stage.tar.gz opt/piavpn
 "
 ```
+
 User writes to cache
 ```bash
 podman cp pia-factory:/tmp/pia-stage.tar.gz /run/user/1000/cache/pia-vpn/pia-stage.tar.gz.tmp

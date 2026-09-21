@@ -137,7 +137,6 @@ Two issues appear in every SPF package unless they are addressed explicitly.
 Both were found by testing the PIA installer across a full install / remove /
 reinstall cycle.
 
----
 
 ### 1. Condition on the deploy unit
 
@@ -155,12 +154,11 @@ The fix is a condition on the deploy unit:
 ConditionPathExists=/usr/libexec/sirius-os/template-deploy.sh
 ```
 
----
-
 
 ### 2. Remove the enablement symlinks
 
 `systemctl enable` creates a symlink in a `.wants/` directory:
+
 
 ```text
 /etc/systemd/system/multi-user.target.wants/template-deploy.path
@@ -176,6 +174,7 @@ directory, tries to load the missing units, and records them as failed.
 The fix is to remove the symlinks explicitly in the dormant uninstaller's
 task file:
 
+
 ```bash
 rm -f /etc/systemd/system/multi-user.target.wants/template-deploy.path
 rm -f /etc/systemd/system/multi-user.target.wants/template-deploy.service
@@ -186,9 +185,6 @@ Both fixes are in the template. If you copy the template and keep those two
 patterns, the install / remove cycle leaves the system clean: no failed
 units, no dangling symlinks.
 
-
-
----
 
 
 ### Verifying the fixes
@@ -211,9 +207,6 @@ journalctl -u template-deploy.service -b --no-pager
 If find returns nothing, systemctl --failed is clean, and the
 journal shows "skipped, unmet condition check" rather than a start
 failure, both fixes are working.
-
-
----
 
 
 ## Benefits
