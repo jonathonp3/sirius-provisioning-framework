@@ -1,10 +1,64 @@
 [Unit]
-Description=Sirius OS: periodic extraction for template
+Description=Sirius OS: extraction trigger for template
 
 [Timer]
+# This timer controls WHEN in the boot the extraction service is
+# invoked. It fires once per boot at OnBootSec after the user
+# session is up. It does NOT control how often the extraction
+# actually does work — that decision belongs to the extract script,
+# which reads a marker file to throttle itself.
+#
+# See the "What the timer actually controls" comment in
+# template-provision.sh for the full rationale. Short version:
+#
+#   - OnBootSec → when the service is invoked, once per boot
+#   - Marker in the extract script → how often the script does work
+#
+# The two are separate on purpose. Tuning one does not require
+# changing the other.
+#
+# Three patterns are common:
+#
+#   1. TIMER-AS-SCHEDULE
+#      OnBootSec is the interval between runs. The script runs once
+#      per boot after that delay. Simple, but inflexible: it cannot
+#      re-arm if the session is torn down mid-run, and it does not
+#      handle first-install reliably because the delay is paid on
+#      every boot, including the one where the user is waiting.
+#
+#   2. TIMER-AS-TRIGGER
+#      OnBootSec is a short delay (1-2 minutes). The script reads a
+#      marker and skips if the last successful run was recent. First
+#      install runs because no marker exists; subsequent boots exit
+#      in milliseconds. Combined with OnCalendar, this handles both
+#      fresh installs and machines that stay up for weeks.
+#
+#   3. TIMER-AS-TRIGGER (first-install tuned)
+#      Same as pattern 2, but OnBootSec is set to the minimum delay
+#      that clears any session-teardown window on the target
+#      systems. On Bazzite the teardown lands at ~52s, so 1min 30sec
+#      is the practical floor. This is the pattern the PIA installer
+#      uses: OnBootSec=1min 30sec with a 7-day stamp.
+#
+# The template ships with pattern 1 for simplicity. Pattern 3 is
+# required for any package that must run on first install. See the
+# pia-installer example for the full implementation.
 OnBootSec=15min
+
+# Backstop for machines that stay up longer than the marker's
+# interval. Set this longer than the marker expiry, so the timer
+# does not wake the script up just to have it exit immediately.
+# Persistent=true ensures a missed calendar trigger fires at the
+# next boot rather than being skipped entirely.
 OnCalendar=monthly
 Persistent=true
+
+# Explicitly bind the timer to its service. Without this, systemd
+# derives the unit name by stripping ".timer" and appending
+# ".service", which works for the default case but is worth stating
+# for clarity. If your service name differs from the timer name,
+# Unit= is required.
+Unit=template-extract.service
 
 [Install]
 WantedBy=timers.target

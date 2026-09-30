@@ -202,7 +202,55 @@ Both fixes are in the template. If you copy the template and keep those two
 patterns, the install / remove cycle leaves the system clean: no failed
 units, no dangling symlinks.
 
+### 3. Remove user-level state directories
 
+The uninstaller runs as root and cleans `/var/` and `/etc/`. But a
+user-level service runs as UID 1000 and writes to `~/.local/state/`.
+That directory is outside the RPM's ownership, outside `/var/`, and
+outside the uninstaller's default scope. If the extractor writes a
+cache, stamp, or marker there, it survives package removal.
+
+The failure mode is silent and deferred. Consider a package whose
+extractor skips its work if a stamp file is recent:
+
+1. The user installs the package. The stamp is written.
+2. The user removes the package. The stamp is not removed.
+3. A week later, the user reinstalls.
+4. The extractor runs on first boot. It sees a fresh-looking stamp,
+   assumes it already checked recently, and exits without doing work.
+5. The package is installed. The software is not. No error is logged.
+   The journal shows the *expected* skip message.
+
+The user sees "I installed it, and nothing happened." There is no
+failed unit to check, no error to search for, and no obvious reason
+to look at a state directory that isn't part of the package.
+
+The fix:
+
+```bash
+# Remove user-level state written by the extractor
+rm -rf "/home/$TARGET_USER/.local/state/<package>"
+rmdir "/home/$TARGET_USER/.local/state/sirius-os" 2>/dev/null || :
+```
+
+Notes:
+
+- `$TARGET_USER` is already defined at the top of the uninstaller's
+  task file in every SPF package, so no extra lookup is needed.
+- The `rmdir` on the parent is guarded. If other SPF packages also
+  write under `.local/state/sirius-os/`, this won't remove their
+  state.
+- The removal is unconditional (`rm -rf`), so it's safe to run even
+  if the directory was already gone.
+- If the user's home is not under `/home/`, use `getent passwd` to
+  resolve it. On Fedora Atomic, `/home` is normally a symlink to
+  `/var/home`, so the `/home/$TARGET_USER` path works in practice.
+
+**Rule of thumb:** if a user-level script writes to `~/.local/`,
+`~/.cache/`, or `~/.config/`, the dormant uninstaller must clean it
+up. The same three-way-merge logic that makes runtime files under
+`/etc/` survive removal makes user-level files survive removal too.
+The uninstaller is the only mechanism that can reach them.
 
 ### Verifying the fixes
 
@@ -225,9 +273,117 @@ If find returns nothing, systemctl --failed is clean, and the
 journal shows "skipped, unmet condition check" rather than a start
 failure, both fixes are working.
 
+## Implementing the cleanup. 
+
+Use `rm -rf` on your package's leaf directory, then `rmdir` on the parent with `2>/dev/null || :`. The `rm -rf` removes your package's state unconditionally. The `rmdir` removes the shared parent only if it's now empty. The guard prevents `set -e` from killing the script when the parent still exists (because another package is using it) or never existed (because your package never wrote anything).
+
+    Using `rm -rf` on the parent instead would clobber other packages' state. Using only `rm -rf` on the leaf would leave an empty parent behind. The two-line form is what "I was the last thing in this directory" looks like in shell.
+
+Every SPF package that writes to a shared directory will hit this — `/etc/sirius-os/`, `~/.local/state/sirius-os/`, `~/.config/systemd/user/` — and the correct implementation isn't obvious from first principles.
+
+---
+
+## Writing cleanup scripts under set -e
+
+Every SPF provisioning script starts with set -euo pipefail. That's the right default for install logic: a failure during provisioning should abort, not silently continue. But cleanup is different. During cleanup, most of the commands you want to run are expected to fail in some legitimate scenario:
+
+    The service is already stopped
+
+    The file was already removed
+
+    The directory isn't empty because another package is using it
+
+    The process never started in the first place
+
+    The mount point was never created
+
+Under set -e, a non-zero exit kills the script. So every command whose failure is acceptable needs an explicit guard.
+
+### The pattern
+
+| Situation | Guard |
+| --- | --- |
+| Command might legitimately fail | `|| :` |
+| Failure is expected and noisy | `2>/dev/null || :` |
+| Failure is expected but output is useful | `|| :` (let `stderr` through) |
+| Silent failure desired, no error channel | `2>/dev/null || true` |
+
+`|| :` and `|| true` are equivalent. `:` is a shell builtin that does nothing and returns `0`. Use whichever reads better.
+
+Examples from the PIA uninstaller
+```bash
+# Might already be stopped or disabled
+systemctl disable --now piavpn.service || :
+
+# Might not exist (first install, nothing to remove)
+pkill -9 pia-daemon || :
+
+# Might not be mounted, or already unmounted
+umount -l /opt/piavpn/etc/cgroup/net_cls 2>/dev/null || :
+
+# Might not be empty — another package may share this parent
+rmdir /etc/sirius-os 2>/dev/null || :
+```
+
+Every line says the same thing: run this, and if it fails, treat the failure as a successful no-op. The script continues to the next line regardless.
+Why this matters
+
+Without guards, the uninstaller aborts on the first non-zero exit. That means:
+
+    The system is left in a half-cleaned state
+
+    The dormant uninstaller service shows as failed in `systemctl --failed`
+
+    The next boot tries again, fails again at the same line, and the state never resolves
+
+    The user has no obvious way to complete the cleanup by hand
+
+With guards, the script runs to completion every time, regardless of which parts of the cleanup were actually needed. The install / remove / reinstall cycle is idempotent: it doesn't matter what state the system is in when the uninstaller fires, because every step handles its own not-needed case.
+The general rule
+
+Under `set -e`, every command whose failure is acceptable needs an explicit guard. If a command's failure is not acceptable — a rm -rf of the package's own state directory, for example — let it fail loudly. The guard is not a blanket safety net; it's a signal that this specific step is allowed to do nothing.
+
+The distinction matters. `rm -rf /var/opt/piavpn` should not be guarded, because if it fails, something is genuinely wrong and you want to know. `rmdir /etc/sirius-os 2>/dev/null || :` should be guarded, because failure just means "the directory wasn't empty" or "there was nothing to clean up," neither of which is a problem.
+
+### Applying it to the deploy unit's condition
+
+The same reasoning extends to the `ConditionPathExists` on the deploy unit. On the boot after package removal, the deploy script is gone from /usr/, but the unit file may still be enabled in /etc/. Without a condition, systemd tries to start a unit whose `ExecStart` target doesn't exist, and the unit shows as failed.
+
+```ini
+
+[Unit]
+ConditionPathExists=/usr/libexec/sirius-os/template-deploy.sh
+```
+
+Same idea in systemd's native language: this unit is expected to be unreachable in a legitimate scenario, so let's not treat unreachability as failure. The condition is the systemd equivalent of `|| :`.
+Where the pattern is already used
+
+All three SPF implementations follow this rule in their uninstallers:
+
+    PIA — systemctl disable, pkill, umount, rmdir on shared parents
+
+    Virtualization — firewalld service removal, libvirt network undefinition, rmdir on shared config directories
+
+    ProtonVPN — nmcli connection delete, dummy interface removal
+
+The pattern is consistent across all three because the underlying constraint is the same: cleanup commands are conditional by nature, and set -e needs to be told that the conditionality is intentional.
+
+---
+
+## Summary
+
+| Principle | Why |
+| --- | --- |
+| `set -e` is the right default for provisioning | A failed setup step should abort |
+| `set -e` needs guards in cleanup | A failed cleanup step is often the desired outcome |
+| Guard syntax: `|| :` or `2>/dev/null || :` | Turns a non-zero exit into success |
+| Don't guard commands whose failure is a real problem | Let `rm -rf` of your own state fail loudly |
+| The same reasoning applies to `ConditionPathExists` | systemd's native way to allow something to be absent |
+
+
+---
 
 ## Benefits
-
 
 | Benefit | Explanation |
 |---------|-------------|
